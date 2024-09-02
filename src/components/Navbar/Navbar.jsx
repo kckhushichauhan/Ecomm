@@ -44,9 +44,7 @@ const Navbar = ({ cartCount, size }) => {
         <Link to="/reviews">
           <FontAwesomeIcon icon={faUser} /> <span>Reviews</span>
         </Link>
-        <Link to="/modal">
-          <FontAwesomeIcon icon={faUser} /> <span>Modal</span>
-        </Link>
+        
         <Link to="/cart_test">
           <FontAwesomeIcon icon={faShoppingCart} />
           <span className="cart-count">{size}</span>

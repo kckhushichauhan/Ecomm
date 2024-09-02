@@ -7,6 +7,7 @@ import "../Modal/Modal.css";
 import user_icon from "../Assets/person.png";
 import email_icon from "../Assets/email.png";
 import password_icon from "../Assets/password.png";
+import Privacymodal from "../Privacymodal/Privacymodal";
 
 // import { Modal } from "../Modal/Modal";
 
@@ -167,6 +168,10 @@ const LoginSignup = ({ onUserUpdate, user }) => {
     setshowModal && <MyModal closeModal={closeModal} />;
     console.log(firstName, lastName, userName, email, password, address, phone);
   };
+  const hellos = () => {
+    setSetshowModal(true);
+    setshowModal && <Privacymodal closeModal={closeModal} />;
+  }
 
   return (
     <div className="container">
@@ -294,7 +299,7 @@ const LoginSignup = ({ onUserUpdate, user }) => {
                       }
                       required
                     />
-                    <label>I accept the privacy policy</label>
+                    <label onClick={hellos}>I accept the privacy policy</label>
                     {errors.acceptedPrivacyPolicy && (
                       <span className="error">
                         {errors.acceptedPrivacyPolicy}
@@ -340,7 +345,7 @@ const LoginSignup = ({ onUserUpdate, user }) => {
                       }
                       required
                     />
-                    <label>I accept the privacy policy</label>
+                    <label onClick={hellos}>I accept the privacy policy</label>
                     {errors.acceptedPrivacyPolicy && (
                       <span className="error">
                         {errors.acceptedPrivacyPolicy}
@@ -368,6 +373,7 @@ const LoginSignup = ({ onUserUpdate, user }) => {
                   : "Login"}
               </button>
               {setshowModal && <MyModal closeModal={closeModal} />}
+              {setshowModal && <Privacymodal closeModal={closeModal} />}
               <button
                 type="button"
                 className="submit gray"
