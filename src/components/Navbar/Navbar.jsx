@@ -13,7 +13,7 @@ import "./Navbar.css";
 const Navbar = ({ cartCount, size }) => {
   return (
     <nav className="navbar">
-      <h2 className="navbar-logo">eCommerce</h2>
+     <img src="https://img1.wsimg.com/isteam/ip/7ffb00db-210e-43d1-a8d6-23fe463127a3/logo.PNG/:/" alt="eCommerce Logo" class="navbar-logo mr-auto"></img>
       <input type="checkbox" id="nav-toggle" className="nav-toggle" />
       <label htmlFor="nav-toggle" className="nav-toggle-label">
         <span></span>

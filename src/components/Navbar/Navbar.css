@@ -93,3 +93,7 @@
     display: block;
   }
 }
+.navbar-logo {
+  width:4rem;
+  color: #f0f0f0;
+}
