@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../Cart_Testing/cart_test.css";
+import { Link } from "react-router-dom";
 
 const Cart_Test = ({ cart, setCart }) => {
   const [price, setPrice] = useState(0);
@@ -57,7 +58,12 @@ const Cart_Test = ({ cart, setCart }) => {
         }
         <div className="total">
           <span>Total Price of your Cart</span>
-          <span>Rs - {price.toFixed(2)}</span>
+          <button className="btn btn-danger" style={{ marginTop: "0px" }}>
+            Rs :{price.toFixed(2)}
+          </button>
+          <Link to="/Checkout">
+            <button style={{ marginTop: "0px" }}>Checkout</button>
+          </Link>
         </div>
       </article>
     </>

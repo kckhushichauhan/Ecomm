@@ -1,113 +1,165 @@
-import React, { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import './Checkout.css';
+import React from 'react'
+import { loadStripe } from "@stripe/stripe-js";
+import { useEffect,useState } from 'react';
 
-const stripePromise = loadStripe('your-publishable-key-here');
+const Checkout = ({cart}) => {
+  const [price, setPrice] = useState(0);
 
-const CheckoutForm = ({ cart, handleCheckout }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [email, setEmail] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentResult, setPaymentResult] = useState(null);
+  const handlePrice = () => {
+    let ans = 0;
+    cart.map((item) => (ans += item.quantity * item.price));
+    setPrice(ans);
+  };
+  useEffect(() => {
+    handlePrice();
+  });
+  const makePayment = async () => {
+    console.log("Payment");
 
-  const processCheckout = async (event) => {
-    event.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
-    }
-
-    setIsProcessing(true);
-
-    const cardElement = elements.getElement(CardElement);
-
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: 'card',
-      card: cardElement,
-      billing_details: {
-        email: email
+    const stripe = await loadStripe(
+      "pk_test_51PwiCJP1l3q7TQO1VK8wkP9SEurXcmdU1JS2JSgzWsstd3sApoM3j0BiInipDnkNurBoxWOm4FwiOcbzYJNTJjND00UIaR2IrL"
+    );
+    const body = {
+      product: cart,
+    };
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const response = await fetch(
+      "http://localhost:8000/api/create-Checkout-session",
+      {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(body),
       }
+    );
+
+    const session = await response.json();
+
+    const result = stripe.redirectToCheckout({
+      sessionId: session.id,
     });
 
-    if (error) {
-      console.error(error);
-      setIsProcessing(false);
-      setPaymentResult({ success: false, message: error.message });
-    } else {
-      console.log('Payment method created:', paymentMethod);
-      // Handle the payment processing here (e.g., send to your backend)
-      const response = await fetch('/api/charge', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          paymentMethodId: paymentMethod.id,
-          items: cart,
-          email
-        })
-      });
-      
-      const paymentResult = await response.json();
-
-      setIsProcessing(false);
-      setPaymentResult(paymentResult);
-
-      if (paymentResult.success) {
-        handleCheckout();
-      }
+    if (result.error) {
+      console.log(result.error);
     }
-  };
-
+    
+  }
   return (
-    <form onSubmit={processCheckout}>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <CardElement className="stripe-element" />
-      <button type="submit" disabled={!stripe || isProcessing}>
-        {isProcessing ? 'Processing...' : 'Place Order'}
-      </button>
-      {paymentResult && (
-        <div className={paymentResult.success ? 'success' : 'error'}>
-          {paymentResult.message}
-        </div>
-      )}
-    </form>
-  );
-};
-
-const Checkout = ({ cart, handleCheckout }) => {
-  const calculateTotal = () => {
-    return cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
-  };
-
-  return (
-    <Elements stripe={stripePromise}>
-      <div className="checkout">
-        <h2>Checkout</h2>
-        <div className="cart-items">
-          {cart.map((item) => (
-            <div key={item.id} className="cart-item">
-              <div>{item.name}</div>
-              <div>${item.price.toFixed(2)}</div>
-              <div>Quantity: {item.quantity}</div>
+    <>
+    <div className="container text-start p-3">
+        <div className="row">
+          <div className="col-md-7">
+            <div className="row">
+              <div className="col-md-6">
+                <div class="form-group p-3">
+                  <label for="FirstName" className="mb-2">
+                    First Name
+                  </label>
+                  <input type="text" class="form-control" id="firstname_text" />
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div className="form-group p-3">
+                  <label for="LastName" className="mb-2">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="lirstname_text"
+                  />
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
-        <div className="cart-summary">
-          <div>Total Price: ${calculateTotal()}</div>
-        </div>
-        <CheckoutForm cart={cart} handleCheckout={handleCheckout} />
-      </div>
-    </Elements>
-  );
-};
+            <div className="row">
+              <div className="col-md-6">
+                <div class="form-group p-3">
+                  <label for="FirstName" className="mb-2">
+                    Phone Number
+                  </label>
+                  <input type="text" class="form-control" id="firstname_text" />
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div class="form-group p-3">
+                  <label for="LastName" className="mb-2">
+                    E-mail
+                  </label>
+                  <input type="text" class="form-control" id="lirstname_text" />
+                </div>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-6">
+                <div class="form-group p-3">
+                  <label for="FirstName" className="mb-2">
+                    Pin Code
+                  </label>
+                  <input type="text" class="form-control" id="firstname_text" />
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div class="form-group p-3">
+                  <label for="LastName" className="mb-2">
+                    City
+                  </label>
+                  <input type="text" class="form-control" id="lirstname_text" />
+                </div>
+              </div>
+            </div>
+            <div className="row p-3">
+              <div class="mb-3 ">
+                <label for="exampleFormControlTextarea1" class="form-label">
+                  Shipping Address
+                </label>
+                <textarea
+                  class="form-control"
+                  id="exampleFormControlTextarea1"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-5">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Image</th>
+                  <th scope="col">Product</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Quantity</th>
+                </tr>
+              </thead>
+              {cart.map((item) => (
+                <tbody key={item.id}>
+                  <tr>
+                    <td>
+                      <img src={item.image} style={{ width: "4rem" }} />
+                    </td>
+                    <td>{item.title}</td>
+                    <td>{item.price}</td>
+                    <td>{item.quantity}</td>
 
-export default Checkout;
+                    <td></td>
+                  </tr>
+                </tbody>
+              ))}
+            </table>
+            <button class="btn btn-primary ms-3">Total Price - {price}</button>
+            <button
+              class="btn btn-danger ms-3"
+              type="button"
+              onClick={makePayment}
+            >
+              Complete Payment
+            </button>
+          </div>
+        </div>
+      </div>
+      
+    </>
+  )
+}
+
+export default Checkout
